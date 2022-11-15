@@ -1,0 +1,163 @@
+---
+title: "Min_Wen_Yang_scriptP2"
+author: "1882252 Min Wen Yang"
+date: "2022-09-22"
+output: html_document
+---
+```{r results = "hide", message = F}
+library(ggplot2)
+library(GGally)
+```
+## Exercise 1
+### 1.
+
+```{r results = "hide", message = F}
+library(foreign)
+spssdata <- read.spss("SPSSData.sav")
+```
+
+### 2.
+
+```{r results = "hide", message = F}
+library("readxl")
+
+importExceldata <- read_excel("ExcelData.xls")
+```
+
+## Exercise 2
+### 1. Apparently the results are not equal. Can you explain this and how much is the difference? (hint: think about binary representation of integers and floating point numbers).
+```{r}
+sqrt(2) * sqrt(2) == 2
+```
+
+This is because sqrt(2) is a floating point. So two floating points' product is still a floating point. So that's why sqrt(2) * sqrt(2) == 2 returns FALSE.
+
+### 2. Find a solution for this problem. Hint: look at in-built functions round(), all.equal().
+```{r}
+round(sqrt(2) * sqrt(2), digits = 0) == 2
+
+all.equal(sqrt(2) * sqrt(2), 2)
+```
+
+solved.
+
+### 3. Why is it important to be aware of this problem? Could you imagine a situation where you would need to take into account this issue? 
+During calculating via R, we have to be aware of floating point problem. Because This will give you wrong output.
+
+## Exercise 3.
+### 1. 
+```{r results = 'hide', message = F}
+data(USArrests)
+USArrests 
+```
+
+### 2.
+
+[,1]	Murder	numeric	Murder arrests (per 100,000)\
+[,2]	Assault	numeric	Assault arrests (per 100,000)\
+[,3]	UrbanPop	numeric	Percent urban population\
+[,4]	Rape	numeric	Rape arrests (per 100,000)
+
+### 3.
+```{r}
+summary(USArrests)
+```
+
+it provides each variable's minimum/maximum value, median, mean, 1st & 3rd quantile.
+
+### 4.
+```{r}
+ggpairs(USArrests)
+```
+
+It is clear that the correlation between "Assault" & "Murder" is the highest(0.802). There are some relation between "Rape"&"Murder", "Rape"&"Assault" to some extent.
+
+```{r}
+panel.hist <- function(x, ...)
+{
+  usr <- par("usr")
+  par(usr = c(usr[1:2], 0, 1.5) )
+  h <- hist(x, plot = FALSE)
+  breaks <- h$breaks; nB <- length(breaks)
+  y <- h$counts; y <- y/max(y)
+  rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+}
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+pairs(USArrests, diag.panel = panel.hist, upper.panel = panel.smooth, lower.panel = panel.cor)
+```
+
+### 6.
+```{r}
+library(lattice)
+
+splom(~USArrests)
+```
+
+### 7.
+```{r}
+splom(~USArrests | state.region)
+```
+
+## Exercise 4.
+```{r}
+load("ChildIQ.RData")
+```
+
+### 1.
+```{r}
+summary(ChildData) 
+```
+
+This shows the mean, median, minimum/maximum value, 1st & 3rd quantile of each variables.
+```{r}
+dim(ChildData)
+```
+
+This shows the numbers of the observation and the number of the variable.
+```{r}
+str(ChildData)
+```
+
+This shows the structure of the data.
+```{r}
+head(ChildData)
+```
+
+This shows the top 6 observations of the data.
+
+
+### 2.
+```{r}
+plot(ChildData$mom.iq, ChildData$kid.score, pch = 20, col = "darkblue")
+```
+
+### 3.
+```{r}
+plot(ChildData$mom.iq, ChildData$kid.score, pch = 20, col = "darkblue", xlab = "IQ of the mother", ylab = "child's score")
+```
+
+### 4.
+```{r}
+plot(ChildData$mom.iq, ChildData$kid.score, pch = 1, col = "darkgrey", xlab = "IQ of the mother", ylab = "child's score")
+```
+
+### 5.
+```{r}
+plot(ChildData$mom.iq, ChildData$kid.score, pch = 1, col = "darkgrey", xlab = "IQ of the mother", ylab = "child's score", 
+     abline(lm(ChildData$kid.score~ChildData$mom.iq), lwd = 2, col = "red"))
+```
+
+### 6.
+```{r}
+plot(ChildData$mom.iq, ChildData$kid.score, pch = 1, col = "darkgrey", xlab = "IQ of the mother", ylab = "child's score", 
+     abline(lm(ChildData$kid.score~ChildData$mom.iq), lwd = 4, col = "blue"))
+```
